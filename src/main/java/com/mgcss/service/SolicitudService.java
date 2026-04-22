@@ -1,6 +1,9 @@
 package com.mgcss.service;
 
 import com.mgcss.domain.*;
+import com.mgcss.infraestructure.SolicitudRepository;
+
+
 
 public class SolicitudService {
     private final SolicitudRepository solicitudRepo;

@@ -1,4 +1,4 @@
-package com.mgcss.domain;
+package com.mgcss.infraestructure.persistence;
 import jakarta.persistence.*;
 
 @Entity

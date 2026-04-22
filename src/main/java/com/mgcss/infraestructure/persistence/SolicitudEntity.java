@@ -1,7 +1,9 @@
-package com.mgcss.domain;
+package com.mgcss.infraestructure.persistence;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+
+import com.mgcss.domain.Solicitud;
 
 @Entity
 public class SolicitudEntity {

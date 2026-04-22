@@ -1,0 +1,44 @@
+package com.mgcss.integration;
+
+import com.mgcss.domain.Solicitud;
+import com.mgcss.domain.TecnicoRepository;
+import com.mgcss.infraestructure.SolicitudRepository;
+import com.mgcss.infraestructure.persistence.JpaSolicitudRepository;
+import com.mgcss.infraestructure.persistence.SolicitudEntity;
+import com.mgcss.service.SolicitudService;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.junit.jupiter.api.Tag;
+
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.time.LocalDate;
+import java.util.Optional;
+
+@Tag("integration")
+@DataJpaTest
+class JpaSolicitudRepositoryIntegrationTest {
+
+    @Autowired
+    private JpaSolicitudRepository repository;
+
+    @Test
+    void deberiaGuardarYRecuperarSolicitud() {
+
+        SolicitudEntity solicitud = new SolicitudEntity();
+        solicitud.setEstado(Solicitud.Estado.ABIERTA);
+        solicitud.setFechaCreacion(LocalDate.now());
+
+        SolicitudEntity saved = repository.save(solicitud);
+
+        Optional<SolicitudEntity> result = repository.findById(saved.getId());
+
+        assertTrue(result.isPresent());
+        assertEquals(Solicitud.Estado.ABIERTA, result.get().getEstado());
+    }
+    
+    
+}
