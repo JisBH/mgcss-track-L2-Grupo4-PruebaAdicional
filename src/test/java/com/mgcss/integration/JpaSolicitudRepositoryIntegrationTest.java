@@ -1,6 +1,7 @@
 package com.mgcss.integration;
 
 
+import com.mgcss.domain.MgcssTrackL2Grupo4Application;
 import com.mgcss.domain.Solicitud;
 
 import com.mgcss.infraestructure.persistence.JpaSolicitudRepository;
@@ -8,7 +9,7 @@ import com.mgcss.infraestructure.persistence.SolicitudEntity;
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
-
+import org.springframework.test.context.ContextConfiguration;
 import org.junit.jupiter.api.Tag;
 
 
@@ -24,6 +25,7 @@ import java.util.Optional;
 @ActiveProfiles("test")
 @Tag("integration")
 @DataJpaTest
+@ContextConfiguration(classes = MgcssTrackL2Grupo4Application.class)
 class JpaSolicitudRepositoryIntegrationTest {
 
     @Autowired
