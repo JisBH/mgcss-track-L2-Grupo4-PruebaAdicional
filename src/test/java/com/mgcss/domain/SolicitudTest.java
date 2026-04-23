@@ -4,42 +4,41 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SolicitudTest {
 	@Test
-	void cerrarSolicitudEnProcesoFunciona() {
-	    Solicitud solicitud = new Solicitud();
-	    solicitud.iniciarProceso();
-
-	    solicitud.cerrar();
-
-	    assertEquals(Solicitud.Estado.CERRADA, solicitud.getEstado());
-	}
-	
-	@Test
-    void noSePuedeCerrarSiNoEstaEnProceso() {
-		Solicitud solicitud = new Solicitud();
-
-	    assertThrows(IllegalStateException.class, () -> {
-	        solicitud.cerrar();
-	        
-	    });
+    void debeIniciarConEstadoAbierto() {
+        Solicitud solicitud = new Solicitud();
+        assertEquals(Solicitud.Estado.ABIERTA, solicitud.getEstado());
     }
-	@Test
-	void asignarTecnicoActivoFunciona() {
-	    Tecnico tecnico = new Tecnico(true);
-	    Solicitud solicitud = new Solicitud();
 
-	    solicitud.asignarTecnico(tecnico);
+    @Test
+    void cerrarSolicitudEnProcesoFunciona() {
+        Solicitud solicitud = new Solicitud();
+        solicitud.iniciarProceso();
+        solicitud.cerrar();
+        assertEquals(Solicitud.Estado.CERRADA, solicitud.getEstado());
+    }
 
-	    assertEquals(tecnico, solicitud.getTecnico());
-	}
+    @Test
+    void noSePuedeCerrarSiEstaAbierta() {
+        Solicitud solicitud = new Solicitud();
+        // Está ABIERTA por defecto, no EN_PROCESO
+        assertThrows(IllegalStateException.class, solicitud::cerrar);
+    }
 
-	@Test
-	void asignarTecnicoInactivoFalla() {
-	    Tecnico tecnico = new Tecnico(false);
-	    Solicitud solicitud = new Solicitud();
+    @Test
+    void asignarTecnicoActivoFunciona() {
+        Tecnico tecnico = new Tecnico(true);
+        Solicitud solicitud = new Solicitud();
+        solicitud.asignarTecnico(tecnico);
+        assertEquals(tecnico, solicitud.getTecnico());
+    }
 
-	    assertThrows(IllegalStateException.class, () -> {
-	        solicitud.asignarTecnico(tecnico);
-	    });
-	}
+    @Test
+    void asignarTecnicoInactivoFalla() {
+        Tecnico tecnico = new Tecnico(false);
+        Solicitud solicitud = new Solicitud();
+        assertThrows(IllegalStateException.class, () -> {
+            solicitud.asignarTecnico(tecnico);
+        });
+    }
 
 }
