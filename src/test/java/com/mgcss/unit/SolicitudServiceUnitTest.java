@@ -1,8 +1,6 @@
 package com.mgcss.unit;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
@@ -11,7 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.mgcss.domain.Tecnico;
+
 import com.mgcss.domain.TecnicoRepository;
 import com.mgcss.service.SolicitudService;
 
