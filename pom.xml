@@ -126,6 +126,12 @@
             </goals>
         </execution>
     </executions>
+    <configuration>
+        <excludes>
+            <exclude>com/mgcss/domain/MgcssTrackL2Grupo4Application.class</exclude>
+             <exclude>com/mgcss/domain/Cliente.class</exclude>
+        </excludes>
+    </configuration>
 </plugin>
 
 		</plugins>
