@@ -4,7 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import com.mgcss.domain.MgcssTrackL2Grupo4Application;
 
-@SpringBootTest
+
+@SpringBootTest(classes = MgcssTrackL2Grupo4Application.class) 
 class MgcssTrackL2Grupo4ApplicationTests {
 
     @Test
