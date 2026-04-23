@@ -9,6 +9,7 @@ public class TecnicoEntity {
 
     private boolean activo;
 
+    
 	public TecnicoEntity() {
 		
 	}
