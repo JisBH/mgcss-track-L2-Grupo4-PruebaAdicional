@@ -45,4 +45,19 @@ class SolicitudServiceTest {
 	            service.asignarTecnico(1L, 99L);
 	        });
 	    }
+	 
+	 @Test
+	    void debeLanzarExcepcionSiTecnicoNoExiste() {
+	        SolicitudRepository repoSolicitud = mock(SolicitudRepository.class);
+	        TecnicoRepository repoTecnico = mock(TecnicoRepository.class);
+	        SolicitudService service = new SolicitudService(repoSolicitud, repoTecnico);
+
+	        Solicitud solicitud = new Solicitud();
+	        when(repoSolicitud.findById(1L)).thenReturn(Optional.of(solicitud));
+	        when(repoTecnico.findById(99L)).thenReturn(Optional.empty());
+
+	        assertThrows(IllegalArgumentException.class, () -> {
+	            service.asignarTecnico(1L, 99L);
+	        });
+	    }
 }

@@ -32,18 +32,21 @@ class JpaSolicitudRepositoryIntegrationTest {
 
     @Test
     void deberiaGuardarYRecuperarSolicitud() {
-
         SolicitudEntity solicitud = new SolicitudEntity();
         solicitud.setEstado(Solicitud.Estado.ABIERTA);
         solicitud.setFechaCreacion(LocalDate.now());
 
         SolicitudEntity saved = repository.save(solicitud);
-
         Optional<SolicitudEntity> result = repository.findById(saved.getId());
 
         assertTrue(result.isPresent());
         assertEquals(Solicitud.Estado.ABIERTA, result.get().getEstado());
     }
-    
+
+    @Test
+    void deberiaRetornarVacioSiIdNoExiste() {
+        Optional<SolicitudEntity> result = repository.findById(999L);
+        assertFalse(result.isPresent());
+    }
     
 }
