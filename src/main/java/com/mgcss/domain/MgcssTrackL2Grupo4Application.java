@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication
 @EntityScan(basePackages = "com.mgcss.infraestructure.persistence")
 
-@EnableJpaRepositories(basePackages = "com.mgcss")
 public class MgcssTrackL2Grupo4Application {
 
 	public static void main(String[] args) {
