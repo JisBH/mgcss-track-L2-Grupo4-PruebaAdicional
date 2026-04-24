@@ -55,4 +55,18 @@ public class SolicitudTest {
         assertEquals(Solicitud.Estado.EN_PROCESO, solicitud.getEstado());
     }
     
+    @Test
+    void debeRegistrarHistorialDeEstados() {
+        Solicitud solicitud = new Solicitud(); // [ABIERTA]
+        solicitud.iniciarProceso();            // [ABIERTA, EN_PROCESO]
+        solicitud.cerrar();                    // [ABIERTA, EN_PROCESO, CERRADA]
+        solicitud.reabrir();                   // [ABIERTA, EN_PROCESO, CERRADA, EN_PROCESO]
+
+        java.util.List<Solicitud.Estado> historial = solicitud.getHistorialEstados();
+        
+        assertEquals(4, historial.size());
+        assertEquals(Solicitud.Estado.ABIERTA, historial.get(0));
+        assertEquals(Solicitud.Estado.CERRADA, historial.get(2));
+        assertEquals(Solicitud.Estado.EN_PROCESO, historial.get(3));
+    }
 }
