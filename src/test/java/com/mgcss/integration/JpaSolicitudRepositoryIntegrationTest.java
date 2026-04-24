@@ -48,5 +48,24 @@ class JpaSolicitudRepositoryIntegrationTest {
         Optional<SolicitudEntity> result = repository.findById(999L);
         assertFalse(result.isPresent());
     }
+    @Test
+    void deberiaGuardarYRecuperarSolicitudConHistorial() {
+        SolicitudEntity solicitud = new SolicitudEntity();
+        solicitud.setEstado(Solicitud.Estado.EN_PROCESO);
+        solicitud.setFechaCreacion(LocalDate.now());
+        
+        // Añadimos estados al historial
+        solicitud.getHistorialEstados().add(Solicitud.Estado.ABIERTA);
+        solicitud.getHistorialEstados().add(Solicitud.Estado.EN_PROCESO);
+
+        SolicitudEntity saved = repository.save(solicitud);
+        
+        // Recuperamos de la BD para verificar persistencia real
+        Optional<SolicitudEntity> result = repository.findById(saved.getId());
+
+        assertTrue(result.isPresent());
+        assertEquals(2, result.get().getHistorialEstados().size());
+        assertEquals(Solicitud.Estado.ABIERTA, result.get().getHistorialEstados().get(0));
+    }
     
 }
