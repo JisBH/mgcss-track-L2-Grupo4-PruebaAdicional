@@ -1,5 +1,6 @@
 package com.mgcss.service;
 
+import com.mgcss.domain.EntidadNoEncontrada;
 import com.mgcss.domain.Solicitud;
 import com.mgcss.domain.Tecnico;
 import com.mgcss.domain.TecnicoRepository;
@@ -41,7 +42,7 @@ class SolicitudServiceTest {
 
 	        SolicitudService service = new SolicitudService(repoSolicitud, repoTecnico);
 
-	        assertThrows(RuntimeException.class, () -> {
+	        assertThrows(EntidadNoEncontrada.class, () -> {
 	            service.asignarTecnico(1L, 99L);
 	        });
 	    }
@@ -56,7 +57,7 @@ class SolicitudServiceTest {
 	        when(repoSolicitud.findById(1L)).thenReturn(Optional.of(solicitud));
 	        when(repoTecnico.findById(99L)).thenReturn(Optional.empty());
 
-	        assertThrows(IllegalArgumentException.class, () -> {
+	        assertThrows(EntidadNoEncontrada.class, () -> {
 	            service.asignarTecnico(1L, 99L);
 	        });
 	    }
