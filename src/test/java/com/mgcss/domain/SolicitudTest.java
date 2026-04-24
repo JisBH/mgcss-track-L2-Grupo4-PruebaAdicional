@@ -20,8 +20,8 @@ public class SolicitudTest {
     @Test
     void noSePuedeCerrarSiEstaAbierta() {
         Solicitud solicitud = new Solicitud();
-        // Está ABIERTA por defecto, no EN_PROCESO
-        assertThrows(IllegalStateException.class, solicitud::cerrar);
+        
+        assertThrows(ReglaNegocio.class, solicitud::cerrar);
     }
 
     @Test
@@ -36,9 +36,10 @@ public class SolicitudTest {
     void asignarTecnicoInactivoFalla() {
         Tecnico tecnico = new Tecnico(false);
         Solicitud solicitud = new Solicitud();
-        assertThrows(IllegalStateException.class, () -> {
+        
+       
+        assertThrows(ReglaNegocio.class, () -> {
             solicitud.asignarTecnico(tecnico);
         });
     }
-
 }
