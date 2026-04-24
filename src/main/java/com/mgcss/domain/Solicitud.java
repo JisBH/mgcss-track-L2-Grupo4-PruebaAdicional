@@ -44,4 +44,11 @@ public class Solicitud {
 	public Tecnico getTecnico() {
 	    return tecnico;
 	}
+	
+	public void reabrir() {
+        if (estado != Estado.CERRADA) {
+            throw new RuntimeException("Solo se pueden reabrir solicitudes cerradas");
+        }
+        this.estado = Estado.EN_PROCESO;
+    }
 }
