@@ -2,11 +2,23 @@ package com.mgcss.infraestructure.persistence;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.mgcss.domain.Solicitud;
 
 @Entity
 public class SolicitudEntity {
+	
+	@ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    private List<Solicitud.Estado> historialEstados = new ArrayList<>();
+
+    // Genera el getter y setter para historialEstados
+    public List<Solicitud.Estado> getHistorialEstados() { return historialEstados; }
+    public void setHistorialEstados(List<Solicitud.Estado> historialEstados) { this.historialEstados = historialEstados; }
+	
+	
 	@Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
