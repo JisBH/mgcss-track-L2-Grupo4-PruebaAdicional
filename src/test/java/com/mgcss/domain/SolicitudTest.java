@@ -42,4 +42,17 @@ public class SolicitudTest {
             solicitud.asignarTecnico(tecnico);
         });
     }
+    
+    //sesion9
+    @Test
+    void reabrirSolicitudCerradaFunciona() {
+        Solicitud solicitud = new Solicitud();
+        solicitud.iniciarProceso();
+        solicitud.cerrar();
+        
+        solicitud.reabrir(); // Este método aún no existe, dará error de compilación
+        
+        assertEquals(Solicitud.Estado.EN_PROCESO, solicitud.getEstado());
+    }
+    
 }
