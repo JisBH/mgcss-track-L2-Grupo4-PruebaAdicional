@@ -27,7 +27,7 @@ public class SolicitudService {
     	return solicitudRepo.findAll();
     }
     
-    public void CambiarEstado(Long id) {
+    public void cambiarEstado(Long id) {
         Solicitud solicitud = consultarSolicitud(id);
         solicitud.iniciarProceso();
         solicitudRepo.save(solicitud);

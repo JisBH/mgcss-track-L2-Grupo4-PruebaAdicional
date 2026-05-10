@@ -17,6 +17,14 @@ public class Solicitud {
 		this.estado = Estado.ABIERTA;
 		this.historialEstados.add(this.estado);
 	}
+	
+	public long getId() {
+		return id;
+	}
+	
+	public LocalDate getFechaCreacion() {
+		return fechaCreacion;
+	}
 
 	public Estado getEstado() {
 		return estado;
