@@ -29,7 +29,7 @@ class SolicitudControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper; 
+    private ObjectMapper objectMapper = new ObjectMapper(); 
 
     @MockitoBean
     private SolicitudService solicitudService;
