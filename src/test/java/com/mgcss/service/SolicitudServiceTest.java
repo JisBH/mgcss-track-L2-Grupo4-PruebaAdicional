@@ -74,7 +74,7 @@ class SolicitudServiceTest {
         Solicitud solicitud = new Solicitud();
         when(repoSolicitud.findById(1L)).thenReturn(Optional.of(solicitud));
 
-        service.CambiarEstado(1L);
+        service.cambiarEstado(1L);
 
         assertEquals(Solicitud.Estado.EN_PROCESO, solicitud.getEstado());
         verify(repoSolicitud).save(solicitud);
