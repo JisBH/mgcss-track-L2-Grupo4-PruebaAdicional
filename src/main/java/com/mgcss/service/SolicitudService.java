@@ -4,6 +4,9 @@ import com.mgcss.domain.*;
 import com.mgcss.infraestructure.SolicitudRepository;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class SolicitudService {
     private final SolicitudRepository solicitudRepo;
     private final TecnicoRepository tecnicoRepo;
