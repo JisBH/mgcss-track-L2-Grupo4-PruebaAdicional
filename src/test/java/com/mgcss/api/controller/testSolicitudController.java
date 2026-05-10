@@ -28,7 +28,6 @@ class SolicitudControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
     private ObjectMapper objectMapper = new ObjectMapper(); 
 
     @MockitoBean
