@@ -1,7 +1,7 @@
 package com.mgcss.api.controller;
 
-import com.mgcss.domain.MgcssTrackL2Grupo4Application;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mgcss.MgcssTrackL2Grupo4Application;
 import com.mgcss.api.dto.AsignarTecnicoRequestDTO;
 import com.mgcss.domain.Solicitud;
 import com.mgcss.domain.Tecnico;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,7 +23,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @WebMvcTest(SolicitudController.class)
-@ContextConfiguration(classes = MgcssTrackL2Grupo4Application.class)
 class SolicitudControllerTest {
 
     @Autowired

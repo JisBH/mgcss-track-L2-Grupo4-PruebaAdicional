@@ -1,15 +1,13 @@
-package com.mgcss.domain;
+package com.mgcss;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.persistence.autoconfigure.EntityScan;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EntityScan(basePackages = "com.mgcss")
-@ComponentScan(basePackages = "com.mgcss")
-@EnableJpaRepositories(basePackages = "com.mgcss")
+//@EntityScan(basePackages = "com.mgcss")
+//@EnableJpaRepositories(basePackages = "com.mgcss")
 public class MgcssTrackL2Grupo4Application {
 
 	public static void main(String[] args) {

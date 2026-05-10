@@ -1,7 +1,7 @@
 package com.mgcss.integration;
 
 
-import com.mgcss.domain.MgcssTrackL2Grupo4Application;
+import com.mgcss.MgcssTrackL2Grupo4Application;
 import com.mgcss.domain.Solicitud;
 import com.mgcss.infraestructure.persistence.JpaSolicitudRepository;
 import com.mgcss.infraestructure.persistence.SolicitudEntity;

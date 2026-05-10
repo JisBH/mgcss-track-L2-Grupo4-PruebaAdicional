@@ -3,7 +3,7 @@ package com.mgcss;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import com.mgcss.domain.MgcssTrackL2Grupo4Application;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @SpringBootTest(classes = MgcssTrackL2Grupo4Application.class)
@@ -20,7 +20,7 @@ class MgcssTrackL2Grupo4ApplicationTests {
     void mainMethodTest() {
         // Al llamar al main, cubres las líneas rojas de la clase principal
         // y la aserción verifica que la aplicación arranca correctamente
-        assertDoesNotThrow(() -> MgcssTrackL2Grupo4Application.main(new String[] {}), 
+        assertDoesNotThrow(() -> MgcssTrackL2Grupo4Application.main(new String[] {"--spring.main.web-application-type=none"}), 
             "El método main debería ejecutarse sin lanzar excepciones");
     }
 }
