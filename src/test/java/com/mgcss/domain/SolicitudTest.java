@@ -65,4 +65,19 @@ class SolicitudTest {
             solicitud.asignarTecnico(tecnicoInactivo);
         });
     }
+    
+    @Test
+    void testConstructorCompletoYGetters() {
+        // Cubre el constructor de reconstrucción y los getters de campos técnicos
+        java.time.LocalDate fecha = java.time.LocalDate.now();
+        java.util.List<Solicitud.Estado> historial = java.util.List.of(Solicitud.Estado.ABIERTA);
+        Tecnico tecnico = new Tecnico(1L, true);
+
+        Solicitud s = new Solicitud(100L, fecha, Solicitud.Estado.ABIERTA, tecnico, historial);
+
+        assertEquals(100L, s.getId());
+        assertEquals(tecnico, s.getTecnico());
+        assertEquals(fecha, s.getFechaCreacion());
+        assertEquals(historial, s.getHistorialEstados());
+    }
 }
