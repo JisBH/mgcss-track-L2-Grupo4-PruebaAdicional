@@ -95,12 +95,20 @@ public class SolicitudService {
     }
     
     /**
-     * Cierra una solicitud y persiste el cambio en la base de datos.
-     * @param id ID de la solicitud a cerrar.
+     * Cierra formalmente una solicitud y persiste el cambio en la base de datos.
+     * <p>
+     * Este método recupera la solicitud, ejecuta la transición de estado a CERRADA
+     * en el modelo de dominio (lo cual dispara las validaciones internas) y guarda
+     * el estado actualizado a través del repositorio.
+     * </p>
+     *
+     * @param id Identificador único de la solicitud a cerrar.
+     * @throws EntidadNoEncontrada Si la solicitud no existe en el sistema.
+     * @throws ReglaNegocio Si la solicitud no cumple los requisitos para cerrarse.
      */
     public void cerrarSolicitud(Long id) {
         Solicitud solicitud = consultarSolicitud(id);
-        solicitud.cerrar(); // Dispara la lógica de dominio y el historial
-        solicitudRepo.save(solicitud); // Persiste el cambio a través del adaptador
+        solicitud.cerrar(); // Lógica de negocio (cambia estado y añade al historial)
+        solicitudRepo.save(solicitud); // Persistencia a través del adaptador
     }
 }

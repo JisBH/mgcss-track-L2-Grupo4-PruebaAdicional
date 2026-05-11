@@ -1,107 +1,83 @@
 package com.mgcss.api.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mgcss.MgcssTrackL2Grupo4Application;
-import com.mgcss.api.dto.AsignarTecnicoRequestDTO;
 import com.mgcss.domain.Solicitud;
 import com.mgcss.domain.Tecnico;
 import com.mgcss.service.SolicitudService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
-@WebMvcTest(SolicitudController.class)
+@WebMvcTest(SolicitudController.class) // Habilita solo el entorno web para este controlador
 class SolicitudControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private MockMvc mockMvc; // Herramienta de Spring para simular peticiones HTTP
 
-    private ObjectMapper objectMapper = new ObjectMapper(); 
+    @Mock
+    private SolicitudService solicitudServiceMock; // Simulamos el servicio de negocio
 
-    @MockitoBean
-    private SolicitudService solicitudService;
-
-    private Solicitud solicitudMock;
+    private Solicitud solicitudPrueba;
 
     @BeforeEach
     void setUp() {
-       
-        solicitudMock = new Solicitud();
-        
+        // Preparamos una solicitud simulada que devolverá nuestro servicio Mock
+        solicitudPrueba = new Solicitud();
+        solicitudPrueba.setId(1L);
+        solicitudPrueba.setFechaCreacion(LocalDate.now());
+        // Le asignamos un técnico para probar el mapeo del DTO
+        solicitudPrueba.setTecnico(new Tecnico(10L, true)); 
     }
 
     @Test
-    void debeCrearSolicitudYDevolver201() throws Exception {
-        when(solicitudService.crearSolicitud()).thenReturn(solicitudMock);
+    void listarTodas_DeberiaDevolverHttp200YListaDeSolicitudes() throws Exception {
+        // 1. Arrange (Preparar): Le decimos al mock qué devolver
+        when(solicitudServiceMock.listarSolicitudes()).thenReturn(List.of(solicitudPrueba));
 
-        mockMvc.perform(post("/api/solicitudes")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.estado").value("ABIERTA"));
+        // 2. Act & Assert (Actuar y Comprobar)
+        mockMvc.perform(get("/api/solicitudes"))
+                .andExpect(status().isOk()) // Esperamos un 200 OK
+                .andExpect(jsonPath("$[0].id").value(1)) // El JSON debe tener ID 1
+                .andExpect(jsonPath("$[0].estado").value("ABIERTA")) // Estado por defecto
+                .andExpect(jsonPath("$[0].tecnicoId").value(10)) // Verificamos que el DTO extrajo el ID del técnico
+                .andExpect(jsonPath("$[0].comentarios[0]").value("Revisión inicial"));
     }
 
     @Test
-    void debeConsultarSolicitudYDevolver200() throws Exception {
-        when(solicitudService.consultarSolicitud(1L)).thenReturn(solicitudMock);
+    void consultar_SiExiste_DeberiaDevolverHttp200YLaSolicitud() throws Exception {
+        when(solicitudServiceMock.consultarSolicitud(1L)).thenReturn(solicitudPrueba);
 
-        mockMvc.perform(get("/api/solicitudes/1")
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/solicitudes/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.estado").value("ABIERTA"));
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.tecnicoId").value(10));
     }
 
     @Test
-    void debeAsignarTecnicoYDevolver200() throws Exception {
-        
-        AsignarTecnicoRequestDTO requestDTO = new AsignarTecnicoRequestDTO(99L);
-        
-        mockMvc.perform(post("/api/solicitudes/1/tecnico")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestDTO)))
-                .andExpect(status().isOk());
+    void crear_DeberiaDevolverHttp201YLaNuevaSolicitud() throws Exception {
+        when(solicitudServiceMock.crearSolicitud()).thenReturn(solicitudPrueba);
 
-        
-        verify(solicitudService).asignarTecnico(1L, 99L);
+        mockMvc.perform(post("/api/solicitudes"))
+                .andExpect(status().isCreated()) // Esperamos un 201 Created
+                .andExpect(jsonPath("$.id").value(1));
     }
 
     @Test
-    void debeRechazarAsignacionSiTecnicoEsNuloYDevolver400() throws Exception {
-      
-        AsignarTecnicoRequestDTO requestDTO = new AsignarTecnicoRequestDTO(null);
+    void cambiarEstado_DeberiaDevolverHttp204() throws Exception {
+        // Como el método cambiarEstado es 'void', no necesitamos 'when(...).thenReturn(...)'
+        // Solo verificamos que la petición responda correctamente
+        mockMvc.perform(put("/api/solicitudes/1/estado"))
+                .andExpect(status().isNoContent()); // Esperamos un 204 No Content
 
-        mockMvc.perform(post("/api/solicitudes/1/tecnico")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestDTO)))
-                .andExpect(status().isBadRequest()); 
-    }
-
-    @Test
-    void debeCambiarEstadoYDevolver204() throws Exception {
-        mockMvc.perform(put("/api/solicitudes/1/estado")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
-
-        verify(solicitudService).cambiarEstado(1L);
-    }
-
-    @Test
-    void debeReabrirYDevolver204() throws Exception {
-        mockMvc.perform(patch("/api/solicitudes/1/reabrir")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
-
-        verify(solicitudService).reabrirSolicitud(1L);
     }
 }

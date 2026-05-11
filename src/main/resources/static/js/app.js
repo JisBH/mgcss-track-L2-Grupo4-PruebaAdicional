@@ -123,7 +123,27 @@ async function reabrir(id) {
     cargarSolicitudes();
 }
 
+/**
+ * Llama al endpoint de cierre de solicitud y refresca la interfaz.
+ * @param {number} id - ID de la solicitud a cerrar.
+ */
 async function cerrarSolicitud(id) {
-    alert("Para cerrar, necesitarías un endpoint @PutMapping('/api/solicitudes/{id}/cerrar') en tu controlador.");
-    // Aquí podrías llamar a un nuevo método del controlador que llame a solicitud.cerrar()
+    if (!confirm('¿Estás seguro de que deseas dar por finalizada esta tarea?')) return;
+    
+    try {
+        const response = await fetch(`/api/solicitudes/${id}/cerrar`, { 
+            method: 'PUT' 
+        });
+
+        if (response.ok) {
+            cargarSolicitudes(); // Refresca la tabla
+        } else {
+            // Manejo de errores de reglas de negocio
+            const errorData = await response.json();
+            alert("No se pudo cerrar: " + (errorData.message || "Error desconocido"));
+        }
+    } catch (error) {
+        console.error("Error en la petición:", error);
+        alert("Error de conexión con el servidor");
+    }
 }

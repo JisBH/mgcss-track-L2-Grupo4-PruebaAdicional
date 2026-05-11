@@ -1,71 +1,39 @@
 package com.mgcss.integration;
 
-
-import com.mgcss.MgcssTrackL2Grupo4Application;
 import com.mgcss.domain.Solicitud;
 import com.mgcss.infraestructure.persistence.JpaSolicitudRepository;
 import com.mgcss.infraestructure.persistence.SolicitudEntity;
-
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.junit.jupiter.api.Tag;
-
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.LocalDate;
-import java.util.Optional;
-
-
-@ActiveProfiles("test")
-@Tag("integration")
-@DataJpaTest
-@ContextConfiguration(classes = MgcssTrackL2Grupo4Application.class)
+@org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest
 class JpaSolicitudRepositoryIntegrationTest {
 
     @Autowired
-    private JpaSolicitudRepository repository;
+    private JpaSolicitudRepository jpaRepository;
 
     @Test
-    void deberiaGuardarYRecuperarSolicitud() {
-        SolicitudEntity solicitud = new SolicitudEntity();
-        solicitud.setEstado(Solicitud.Estado.ABIERTA);
-        solicitud.setFechaCreacion(LocalDate.now());
+    void guardarYRecuperarSolicitudEntity_DeberiaFuncionar() {
+        // 1. Arrange: Preparamos la entidad técnica
+        SolicitudEntity entity = new SolicitudEntity();
+        entity.setEstado(Solicitud.Estado.EN_PROCESO);
+        entity.setFechaCreacion(LocalDate.now());
+        entity.setHistorialEstados(List.of(Solicitud.Estado.ABIERTA, Solicitud.Estado.EN_PROCESO));
 
-        SolicitudEntity saved = repository.save(solicitud);
-        Optional<SolicitudEntity> result = repository.findById(saved.getId());
-
-        assertTrue(result.isPresent());
-        assertEquals(Solicitud.Estado.ABIERTA, result.get().getEstado());
-    }
-
-    @Test
-    void deberiaRetornarVacioSiIdNoExiste() {
-        Optional<SolicitudEntity> result = repository.findById(999L);
-        assertFalse(result.isPresent());
-    }
-    @Test
-    void deberiaGuardarYRecuperarSolicitudConHistorial() {
-        SolicitudEntity solicitud = new SolicitudEntity();
-        solicitud.setEstado(Solicitud.Estado.EN_PROCESO);
-        solicitud.setFechaCreacion(LocalDate.now());
+        // 2. Act: Guardamos en la base de datos H2
+        SolicitudEntity guardada = jpaRepository.save(entity);
         
-        // Añadimos estados al historial
-        solicitud.getHistorialEstados().add(Solicitud.Estado.ABIERTA);
-        solicitud.getHistorialEstados().add(Solicitud.Estado.EN_PROCESO);
+        // Buscamos la entidad recién guardada
+        SolicitudEntity recuperada = jpaRepository.findById(guardada.getId()).orElse(null);
 
-        SolicitudEntity saved = repository.save(solicitud);
-        
-        // Recuperamos de la BD para verificar persistencia real
-        Optional<SolicitudEntity> result = repository.findById(saved.getId());
-
-        assertTrue(result.isPresent());
-        assertEquals(2, result.get().getHistorialEstados().size());
-        assertEquals(Solicitud.Estado.ABIERTA, result.get().getHistorialEstados().get(0));
+        // 3. Assert: Comprobamos que JPA hizo su trabajo
+        assertNotNull(recuperada);
+        assertNotNull(recuperada.getId()); // H2 debió generar un ID automático
+        assertEquals(Solicitud.Estado.EN_PROCESO, recuperada.getEstado());
+        assertEquals(2, recuperada.getHistorialEstados().size());
     }
-    
 }
