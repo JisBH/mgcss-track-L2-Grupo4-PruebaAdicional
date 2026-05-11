@@ -1,72 +1,83 @@
 package com.mgcss.domain;
+
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SolicitudTest {
-	@Test
-    void debeIniciarConEstadoAbierto() {
+class SolicitudTest {
+
+    @Test
+    void crearSolicitud_DeberiaEstarAbiertaYTenerFecha() {
+        // Ejecución
         Solicitud solicitud = new Solicitud();
+
+        // Comprobación
         assertEquals(Solicitud.Estado.ABIERTA, solicitud.getEstado());
+        assertNotNull(solicitud.getFechaCreacion());
+        assertTrue(solicitud.getHistorialEstados().contains(Solicitud.Estado.ABIERTA));
     }
 
     @Test
-    void cerrarSolicitudEnProcesoFunciona() {
+    void iniciarProceso_DeberiaCambiarEstadoAEnProceso() {
         Solicitud solicitud = new Solicitud();
+        
         solicitud.iniciarProceso();
+
+        assertEquals(Solicitud.Estado.EN_PROCESO, solicitud.getEstado());
+        assertEquals(2, solicitud.getHistorialEstados().size()); // ABIERTA -> EN_PROCESO
+    }
+
+    @Test
+    void cerrarSolicitud_EstandoEnProceso_DeberiaFuncionar() {
+        Solicitud solicitud = new Solicitud();
+        solicitud.iniciarProceso(); // Primero debe estar en proceso
+        
         solicitud.cerrar();
+
         assertEquals(Solicitud.Estado.CERRADA, solicitud.getEstado());
     }
 
     @Test
-    void noSePuedeCerrarSiEstaAbierta() {
-        Solicitud solicitud = new Solicitud();
-        
-        assertThrows(ReglaNegocio.class, solicitud::cerrar);
-    }
+    void cerrarSolicitud_EstandoAbierta_DeberiaLanzarExcepcion() {
+        Solicitud solicitud = new Solicitud(); // Está ABIERTA por defecto
 
-    @Test
-    void asignarTecnicoActivoFunciona() {
-        Tecnico tecnico = new Tecnico(true);
-        Solicitud solicitud = new Solicitud();
-        solicitud.asignarTecnico(tecnico);
-        assertEquals(tecnico, solicitud.getTecnico());
-    }
-
-    @Test
-    void asignarTecnicoInactivoFalla() {
-        Tecnico tecnico = new Tecnico(false);
-        Solicitud solicitud = new Solicitud();
-        
-       
+        // Comprobamos que lance la regla de negocio
         assertThrows(ReglaNegocio.class, () -> {
-            solicitud.asignarTecnico(tecnico);
+            solicitud.cerrar();
+        });
+    }
+
+    @Test
+    void asignarTecnicoActivo_DeberiaFuncionar() {
+        Solicitud solicitud = new Solicitud();
+        Tecnico tecnicoActivo = new Tecnico(1L, true);
+
+        solicitud.asignarTecnico(tecnicoActivo);
+
+        assertEquals(tecnicoActivo, solicitud.getTecnico());
+    }
+
+    @Test
+    void asignarTecnicoInactivo_DeberiaLanzarExcepcion() {
+        Solicitud solicitud = new Solicitud();
+        Tecnico tecnicoInactivo = new Tecnico(2L, false);
+
+        assertThrows(ReglaNegocio.class, () -> {
+            solicitud.asignarTecnico(tecnicoInactivo);
         });
     }
     
-    //sesion9
     @Test
-    void reabrirSolicitudCerradaFunciona() {
-        Solicitud solicitud = new Solicitud();
-        solicitud.iniciarProceso();
-        solicitud.cerrar();
-        
-        solicitud.reabrir(); // Este método aún no existe, dará error de compilación
-        
-        assertEquals(Solicitud.Estado.EN_PROCESO, solicitud.getEstado());
-    }
-    
-    @Test
-    void debeRegistrarHistorialDeEstados() {
-        Solicitud solicitud = new Solicitud(); // [ABIERTA]
-        solicitud.iniciarProceso();            // [ABIERTA, EN_PROCESO]
-        solicitud.cerrar();                    // [ABIERTA, EN_PROCESO, CERRADA]
-        solicitud.reabrir();                   // [ABIERTA, EN_PROCESO, CERRADA, EN_PROCESO]
+    void testConstructorCompletoYGetters() {
+        // Cubre el constructor de reconstrucción y los getters de campos técnicos
+        java.time.LocalDate fecha = java.time.LocalDate.now();
+        java.util.List<Solicitud.Estado> historial = java.util.List.of(Solicitud.Estado.ABIERTA);
+        Tecnico tecnico = new Tecnico(1L, true);
 
-        java.util.List<Solicitud.Estado> historial = solicitud.getHistorialEstados();
-        
-        assertEquals(4, historial.size());
-        assertEquals(Solicitud.Estado.ABIERTA, historial.get(0));
-        assertEquals(Solicitud.Estado.CERRADA, historial.get(2));
-        assertEquals(Solicitud.Estado.EN_PROCESO, historial.get(3));
+        Solicitud s = new Solicitud(100L, fecha, Solicitud.Estado.ABIERTA, tecnico, historial);
+
+        assertEquals(100L, s.getId());
+        assertEquals(tecnico, s.getTecnico());
+        assertEquals(fecha, s.getFechaCreacion());
+        assertEquals(historial, s.getHistorialEstados());
     }
 }

@@ -1,21 +1,15 @@
 package com.mgcss;
 
-import com.mgcss.domain.TecnicoRepository;
-import com.mgcss.infraestructure.SolicitudRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
-@SpringBootTest(classes = MgcssTrackL2Grupo4Application.class)
-@ActiveProfiles("test") 
+@SpringBootTest
 class MgcssTrackL2Grupo4ApplicationTests {
 
-    @MockitoBean
-    private SolicitudRepository solicitudRepository;
+    @Test
+    void contextLoads() {
+        // Este test pasa en verde si Spring Boot logra levantar todo el contexto
+        // sin que falten dependencias ni haya errores de configuración arquitectónica.
+    }
 
-    @MockitoBean
-    private TecnicoRepository tecnicoRepository;
 }

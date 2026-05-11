@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MGCSS - Panel de Gestión de Solicitudes</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div>
+            <h1 style="margin:0; font-size: 1.5rem; color: var(--primary);">MGCSS Mantenimiento</h1>
+            <p style="margin:5px 0 0; color: var(--secondary);">Gestión Integral de Solicitudes</p>
+        </div>
+        
+        <div class="session-panel">
+            <strong>Actuar como:</strong>
+            <select id="userRole" onchange="switchRole()">
+                <option value="ADMIN">Administrador</option>
+            </select>
+            <button class="btn-ghost" onclick="initData()">Refrescar ↻</button>
+        </div>
+    </header>
+
+    <div style="margin-bottom: 20px;">
+        <button class="btn-primary admin-only" onclick="crearSolicitud()">+ Nueva Solicitud</button>
+        <button class="btn-ghost admin-only" onclick="crearTecnico()">+ Registrar Nuevo Técnico</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Técnico</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="solicitudesTable">
+            </tbody>
+    </table>
+</div>
+
+<script src="js/app.js"></script>
+
+</body>
+</html>

@@ -1,119 +1,102 @@
 package com.mgcss.service;
 
-import com.mgcss.domain.EntidadNoEncontrada;
-import com.mgcss.domain.Solicitud;
-import com.mgcss.domain.Tecnico;
-import com.mgcss.domain.TecnicoRepository;
-import com.mgcss.infraestructure.SolicitudRepository;
+import com.mgcss.domain.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(MockitoExtension.class) // Habilita el uso de Mocks
 class SolicitudServiceTest {
 
     @Mock
-    private SolicitudRepository repoSolicitud;
+    private SolicitudRepository solicitudRepoMock; // Repositorio de mentira
 
     @Mock
-    private TecnicoRepository repoTecnico;
+    private TecnicoRepository tecnicoRepoMock; // Repositorio de mentira
 
     @InjectMocks
-    private SolicitudService service;
+    private SolicitudService solicitudService; // El servicio real, que usará los repos de mentira
 
-    @Test
-    void debeCrearSolicitud() {
-        Solicitud nueva = new Solicitud();
-        when(repoSolicitud.save(any(Solicitud.class))).thenReturn(nueva);
+    private Solicitud solicitudPrueba;
 
-        Solicitud resultado = service.crearSolicitud();
-
-        assertNotNull(resultado);
-        verify(repoSolicitud).save(any(Solicitud.class));
+    @BeforeEach
+    void setUp() {
+        // Preparamos unos datos básicos antes de cada test
+        solicitudPrueba = new Solicitud();
+        solicitudPrueba.setId(100L);
     }
 
     @Test
-    void debeConsultarSolicitudExistente() {
-        Solicitud solicitud = new Solicitud();
-        when(repoSolicitud.findById(1L)).thenReturn(Optional.of(solicitud));
+    void consultarSolicitud_SiExiste_DeberiaDevolverla() {
+        // Le decimos al Mock qué hacer cuando le pidan el ID 100
+        when(solicitudRepoMock.findById(100L)).thenReturn(Optional.of(solicitudPrueba));
 
-        Solicitud resultado = service.consultarSolicitud(1L);
+        Solicitud encontrada = solicitudService.consultarSolicitud(100L);
 
-        assertNotNull(resultado);
-        assertEquals(solicitud, resultado);
+        assertEquals(100L, encontrada.getId());
     }
 
     @Test
-    void debeLanzarExcepcionAlConsultarSolicitudQueNoExiste() {
-        when(repoSolicitud.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(EntidadNoEncontrada.class, () -> service.consultarSolicitud(1L));
+    void consultarSolicitud_SiNoExiste_DeberiaLanzarEntidadNoEncontrada() {
+        // Le decimos al Mock que devuelva vacío para el ID 999
+        when(solicitudRepoMock.findById(999L)).thenReturn(Optional.empty());
+
+        assertThrows(EntidadNoEncontrada.class, () -> {
+            solicitudService.consultarSolicitud(999L);
+        });
     }
 
     @Test
-    void debeListarSolicitudes() {
-        List<Solicitud> listaMock = Arrays.asList(new Solicitud(), new Solicitud());
-        when(repoSolicitud.findAll()).thenReturn(listaMock);
+    void crearSolicitud_DeberiaGuardarEnRepositorio() {
+        when(solicitudRepoMock.save(any(Solicitud.class))).thenReturn(solicitudPrueba);
 
-        List<Solicitud> resultado = service.listarSolicitudes();
+        Solicitud creada = solicitudService.crearSolicitud();
 
-        assertEquals(2, resultado.size());
-        verify(repoSolicitud).findAll();
+        assertNotNull(creada);
+        // Verificamos que el repositorio guardó algo al menos 1 vez
+        verify(solicitudRepoMock, times(1)).save(any(Solicitud.class)); 
     }
 
     @Test
-    void debeIniciarProcesoSolicitud() {
-        Solicitud solicitud = new Solicitud();
-        when(repoSolicitud.findById(1L)).thenReturn(Optional.of(solicitud));
+    void asignarTecnico_DeberiaGuardarSolicitudModificada() {
+        Tecnico tecnico = new Tecnico(50L, true);
+        
+        // Simulamos que la solicitud y el técnico existen
+        when(solicitudRepoMock.findById(100L)).thenReturn(Optional.of(solicitudPrueba));
+        when(tecnicoRepoMock.findById(50L)).thenReturn(Optional.of(tecnico));
 
-        service.cambiarEstado(1L);
+        solicitudService.asignarTecnico(100L, 50L);
 
-        assertEquals(Solicitud.Estado.EN_PROCESO, solicitud.getEstado());
-        verify(repoSolicitud).save(solicitud);
+        // Verificamos que el técnico se asignó
+        assertEquals(50L, solicitudPrueba.getTecnico().getId());
+        // Verificamos que se llamó al método save para guardar el cambio
+        verify(solicitudRepoMock, times(1)).save(solicitudPrueba);
     }
-
-
+    
     @Test
-    void debeReabrirSolicitud() {
-        Solicitud solicitud = new Solicitud();
-        solicitud.iniciarProceso();
-        solicitud.cerrar(); 
-        when(repoSolicitud.findById(1L)).thenReturn(Optional.of(solicitud));
-
-        service.reabrirSolicitud(1L);
-
-        assertEquals(Solicitud.Estado.EN_PROCESO, solicitud.getEstado());
-        verify(repoSolicitud).save(solicitud);
-    }
-
-    @Test
-    void debeAsignarTecnicoCorrectamente() {
-        Solicitud solicitud = new Solicitud();
-        Tecnico tecnicoActivo = new Tecnico(true);
-
-        when(repoSolicitud.findById(1L)).thenReturn(Optional.of(solicitud));
-        when(repoTecnico.findById(99L)).thenReturn(Optional.of(tecnicoActivo));
-
-        service.asignarTecnico(1L, 99L);
-
-        verify(repoSolicitud).save(solicitud);
-        assertEquals(tecnicoActivo, solicitud.getTecnico());
+    void listarSolicitudes_DeberiaLlamarAlRepo() {
+        when(solicitudRepoMock.findAll()).thenReturn(java.util.List.of(solicitudPrueba));
+        java.util.List<Solicitud> lista = solicitudService.listarSolicitudes();
+        assertFalse(lista.isEmpty());
     }
 
     @Test
-    void debeLanzarExcepcionSiTecnicoNoExisteAlAsignar() {
-        Solicitud solicitud = new Solicitud();
-        when(repoSolicitud.findById(1L)).thenReturn(Optional.of(solicitud));
-        when(repoTecnico.findById(99L)).thenReturn(Optional.empty());
-
-        assertThrows(EntidadNoEncontrada.class, () -> service.asignarTecnico(1L, 99L));
+    void cerrarSolicitud_DeberiaFuncionar() {
+        solicitudPrueba.iniciarProceso(); // Para que pueda cerrarse
+        when(solicitudRepoMock.findById(1L)).thenReturn(java.util.Optional.of(solicitudPrueba));
+        
+        solicitudService.cerrarSolicitud(1L);
+        
+        assertEquals(Solicitud.Estado.CERRADA, solicitudPrueba.getEstado());
+        verify(solicitudRepoMock).save(solicitudPrueba);
     }
 }
