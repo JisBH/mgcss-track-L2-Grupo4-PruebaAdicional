@@ -93,4 +93,14 @@ public class SolicitudService {
         solicitud.asignarTecnico(tecnico);        
         solicitudRepo.save(solicitud);
     }
+    
+    /**
+     * Cierra una solicitud y persiste el cambio en la base de datos.
+     * @param id ID de la solicitud a cerrar.
+     */
+    public void cerrarSolicitud(Long id) {
+        Solicitud solicitud = consultarSolicitud(id);
+        solicitud.cerrar(); // Dispara la lógica de dominio y el historial
+        solicitudRepo.save(solicitud); // Persiste el cambio a través del adaptador
+    }
 }

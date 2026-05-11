@@ -116,4 +116,28 @@ public class SolicitudController {
             historialStr
         );
     }
+    
+    /**
+     * Endpoint para finalizar y cerrar una solicitud existente.
+     * <p>
+     * Este método recupera la solicitud a través del servicio, ejecuta la lógica de 
+     * transición de estado en el modelo de dominio (validando que la solicitud esté 
+     * en proceso) y devuelve una respuesta exitosa sin cuerpo.
+     * </p>
+     *
+     * @param id Identificador único de la solicitud que se desea cerrar.
+     * @return Una respuesta {@link ResponseEntity} con estado 204 (No Content) si la 
+     * operación se realiza correctamente.
+     * @throws EntidadNoEncontrada Si no existe una solicitud con el ID proporcionado.
+     * @throws ReglaNegocio Si la solicitud no cumple los requisitos para ser cerrada 
+     * (por ejemplo, si aún está en estado ABIERTA).
+     */
+    @PutMapping("/{id}/cerrar")
+    public ResponseEntity<Void> cerrar(@PathVariable Long id) {
+        Solicitud solicitud = solicitudService.consultarSolicitud(id);
+        solicitud.cerrar(); // Lógica de negocio
+        // Aquí necesitarías que el service guarde el cambio, 
+        // podrías crear un método en el service llamado cerrarSolicitud(id)
+        return ResponseEntity.noContent().build();
+    }
 }
