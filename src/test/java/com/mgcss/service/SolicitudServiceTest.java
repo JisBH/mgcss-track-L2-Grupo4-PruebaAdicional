@@ -81,4 +81,22 @@ class SolicitudServiceTest {
         // Verificamos que se llamó al método save para guardar el cambio
         verify(solicitudRepoMock, times(1)).save(solicitudPrueba);
     }
+    
+    @Test
+    void listarSolicitudes_DeberiaLlamarAlRepo() {
+        when(solicitudRepoMock.findAll()).thenReturn(java.util.List.of(solicitudPrueba));
+        java.util.List<Solicitud> lista = solicitudService.listarSolicitudes();
+        assertFalse(lista.isEmpty());
+    }
+
+    @Test
+    void cerrarSolicitud_DeberiaFuncionar() {
+        solicitudPrueba.iniciarProceso(); // Para que pueda cerrarse
+        when(solicitudRepoMock.findById(1L)).thenReturn(java.util.Optional.of(solicitudPrueba));
+        
+        solicitudService.cerrarSolicitud(1L);
+        
+        assertEquals(Solicitud.Estado.CERRADA, solicitudPrueba.getEstado());
+        verify(solicitudRepoMock).save(solicitudPrueba);
+    }
 }
