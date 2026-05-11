@@ -2,9 +2,10 @@ package com.mgcss.service;
 
 import com.mgcss.domain.EntidadNoEncontrada;
 import com.mgcss.domain.Solicitud;
+import com.mgcss.domain.SolicitudRepository;
 import com.mgcss.domain.Tecnico;
 import com.mgcss.domain.TecnicoRepository;
-import com.mgcss.infraestructure.SolicitudRepository;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

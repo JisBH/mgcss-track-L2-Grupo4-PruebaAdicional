@@ -1,7 +1,8 @@
 package com.mgcss;
 
+import com.mgcss.domain.SolicitudRepository;
 import com.mgcss.domain.TecnicoRepository;
-import com.mgcss.infraestructure.SolicitudRepository;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
