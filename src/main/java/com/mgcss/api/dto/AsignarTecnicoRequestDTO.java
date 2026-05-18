@@ -1,5 +1,6 @@
 package com.mgcss.api.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -11,6 +12,7 @@ import jakarta.validation.constraints.NotNull;
  */
 public record AsignarTecnicoRequestDTO(
     @NotNull(message = "El ID del técnico no puede ser nulo")
+    @Schema(description = "ID del técnico que se va a asignar", example = "5")
     Long tecnicoId
 ) {
 }
