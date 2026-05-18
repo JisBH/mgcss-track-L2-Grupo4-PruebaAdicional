@@ -2,14 +2,11 @@ package com.mgcss.api.controller;
 
 import com.mgcss.domain.Tecnico;
 import com.mgcss.service.TecnicoService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 
@@ -19,41 +16,33 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class) // Usamos solo Mockito, nada de Spring
+@WebMvcTest(TecnicoController.class) 
 class TecnicoControllerTest {
 
+    @Autowired
     private MockMvc mockMvc;
 
-    @Mock
-    private TecnicoService tecnicoServiceMock;
-
-    @InjectMocks
-    private TecnicoController tecnicoController;
-
-    @BeforeEach
-    void setUp() {
-        // Configuramos MockMvc en modo "standalone" (aislado)
-        mockMvc = MockMvcBuilders.standaloneSetup(tecnicoController).build();
-    }
+    @MockitoBean
+    private TecnicoService tecnicoService;
 
     @Test
     void listar_DeberiaDevolverHttp200YListaDeTecnicos() throws Exception {
-        when(tecnicoServiceMock.listarTecnicos()).thenReturn(List.of(
+        when(tecnicoService.listarTecnicos()).thenReturn(List.of(
                 new Tecnico(1L, true)
         ));
 
         mockMvc.perform(get("/api/tecnicos"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(status().isOk()) // Código HTTP 200 OK
+                .andExpect(jsonPath("$[0].id").value(1)) // Estructura JSON correcta
                 .andExpect(jsonPath("$[0].activo").value(true));
     }
 
     @Test
     void crear_DeberiaDevolverHttp201YElNuevoTecnico() throws Exception {
-        when(tecnicoServiceMock.crearTecnico(true)).thenReturn(new Tecnico(2L, true));
+        when(tecnicoService.crearTecnico(true)).thenReturn(new Tecnico(2L, true));
 
         mockMvc.perform(post("/api/tecnicos"))
-                .andExpect(status().isCreated())
+                .andExpect(status().isCreated()) // Código HTTP 201 Created
                 .andExpect(jsonPath("$.id").value(2))
                 .andExpect(jsonPath("$.activo").value(true));
     }
