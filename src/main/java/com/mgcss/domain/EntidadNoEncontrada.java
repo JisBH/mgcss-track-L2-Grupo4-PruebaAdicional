@@ -1,5 +1,8 @@
 package com.mgcss.domain;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 /**
  * Excepción de dominio lanzada cuando no se encuentra una entidad requerida.
  * * Se utiliza típicamente en los servicios de aplicación cuando una búsqueda por ID
@@ -7,6 +10,7 @@ package com.mgcss.domain;
  * * Al ser una {@link RuntimeException}, permite un manejo limpio sin ensuciar las
  * firmas de los métodos del dominio.
  */
+@ResponseStatus(HttpStatus.NOT_FOUND)
 public class EntidadNoEncontrada extends RuntimeException {
 
     /**
