@@ -3,6 +3,8 @@ package com.mgcss.api.dto;
 import java.time.LocalDate;
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * DTO (Data Transfer Object) que representa la respuesta de una Solicitud.
  * Se utiliza para enviar los datos consolidados desde el servidor hacia el cliente (frontend).
@@ -14,11 +16,21 @@ import java.util.List;
  * @param tecnicoId     Identificador del técnico asignado (puede ser null si aún no ha sido asignado).
  * @param historial     Lista ordenada cronológicamente con los nombres de los estados por los que ha pasado.
  */
+@Schema(description = "DTO que representa la respuesta detallada de una solicitud")
 public record SolicitudResponseDTO(
-    long id,
-    String estado,
-    LocalDate fechaCreacion,
-    Long tecnicoId, 
-    List<String> historial 
-) { 
-}
+		@Schema(description = "Identificador único de la solicitud", example = "1")
+	    long id,
+	    
+	    @Schema(description = "Estado actual de la solicitud", example = "ABIERTA")
+	    String estado,
+	    
+	    @Schema(description = "Fecha en la que se realizo la solicitud", example = "2026-05-15")
+	    LocalDate fechaCreacion,
+	    
+	    @Schema(description = "ID del técnico asignado", example = "10")
+	    Long tecnicoId, 
+	    
+	    @Schema(description = "Lista de estados por los que ha pasado la solicitud", example = "[\"ABIERTA\", \"ASIGNADA\"]")
+	    List<String> historial 
+	) {
+	}

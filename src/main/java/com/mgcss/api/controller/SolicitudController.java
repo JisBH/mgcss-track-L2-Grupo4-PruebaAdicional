@@ -4,6 +4,11 @@ import com.mgcss.api.dto.AsignarTecnicoRequestDTO;
 import com.mgcss.api.dto.SolicitudResponseDTO;
 import com.mgcss.domain.Solicitud;
 import com.mgcss.service.SolicitudService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +21,7 @@ import java.util.stream.Collectors;
  * Controlador REST (Adaptador Primario) que expone los casos de uso de las solicitudes.
  * Gestiona las peticiones HTTP, mapea los DTOs hacia el dominio y devuelve las respuestas.
  */
+@Tag(name = "Solicitudes", description = "Gestión del ciclo de vida de las solicitudes de mantenimiento")
 @RestController
 @RequestMapping("/api/solicitudes")
 public class SolicitudController {
@@ -30,6 +36,11 @@ public class SolicitudController {
      * Endpoint para crear una nueva solicitud.
      * @return Respuesta HTTP 201 (Created) con los datos de la solicitud creada.
      */
+    @Operation(summary = "Crear una nueva solicitud", description = "Permite registrar una nueva incidencia en el sistema")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Solicitud creada con éxito"),
+        @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos")
+    })
     @PostMapping
     public ResponseEntity<SolicitudResponseDTO> crear() {
         Solicitud nueva = solicitudService.crearSolicitud();
@@ -41,6 +52,11 @@ public class SolicitudController {
      * @param id ID de la solicitud en la ruta.
      * @return Respuesta HTTP 200 (OK) con la solicitud encontrada.
      */
+    @Operation(summary = "Consultar una solicitud", description = "Obtiene los detalles de una solicitud específica mediante su ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Solicitud encontrada correctamente"),
+        @ApiResponse(responseCode = "404", description = "La solicitud no existe")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<SolicitudResponseDTO> consultar(@PathVariable Long id) {
         Solicitud solicitud = solicitudService.consultarSolicitud(id);
