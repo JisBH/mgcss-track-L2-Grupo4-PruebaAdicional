@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # Servicio 1: Base de Datos Relacional (PostgreSQL)
+  db:
+    image: postgres:15-alpine
+    container_name: mgcss-postgres-db
+    environment:
+      POSTGRES_DB: mgcssdb
+      POSTGRES_USER: sa
+      POSTGRES_PASSWORD: micasasupersegura
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sa -d mgcssdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Servicio 2: Tu aplicación Spring Boot (Arquitectura Hexagonal)
+  app:
+    image: mgcss-track
+    container_name: mgcss-app-container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    environment:
+      - SERVER_PORT=9090
+      - SPRING_PROFILES_ACTIVE=prod
+      - DB_URL=jdbc:postgresql://db:5432/mgcssdb
+      - DB_DRIVER=org.postgresql.Driver
+      - DB_USER=sa
+      - DB_PASSWORD=micasasupersegura
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
