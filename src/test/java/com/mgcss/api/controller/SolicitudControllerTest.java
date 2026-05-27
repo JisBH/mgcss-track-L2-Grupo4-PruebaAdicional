@@ -59,13 +59,27 @@ class SolicitudControllerTest {
 
     @Test
     void crear_DeberiaDevolverHttp201YLaNuevaSolicitud() throws Exception {
+        // 1. Preparamos la respuesta simulada
         Solicitud solicitudPrueba = new Solicitud();
         solicitudPrueba.setId(1L);
+        solicitudPrueba.setDescripcion("Nueva tarea");
 
-        when(solicitudService.crearSolicitud()).thenReturn(solicitudPrueba);
+        // Usamos anyString() y anyLong() porque la firma del servicio cambió
+        when(solicitudService.crearSolicitud(anyString(), anyLong())).thenReturn(solicitudPrueba);
 
-        mockMvc.perform(post("/api/solicitudes"))
-                .andExpect(status().isCreated()) // Código HTTP 201 Created
+        // 2. Preparamos el JSON que simula enviar el frontend
+        String jsonPayload = """
+            {
+                "descripcion": "Nueva tarea",
+                "clienteId": 1
+            }
+            """;
+
+        // 3. Hacemos la petición POST enviando el JSON
+        mockMvc.perform(post("/api/solicitudes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonPayload))
+                .andExpect(status().isCreated()) // Ahora sí devolverá 201 Created
                 .andExpect(jsonPath("$.id").value(1));
     }
 
@@ -129,5 +143,38 @@ class SolicitudControllerTest {
 
         mockMvc.perform(put("/api/solicitudes/1/cerrar"))
                 .andExpect(status().isBadRequest()); // Responde 400 automáticamente gracias al @ResponseStatus
+    }
+    
+    @Test
+    void consultar_SinClienteNiTecnico_DeberiaMapearNullsCorrectamente() throws Exception {
+        Solicitud solicitudPrueba = new Solicitud();
+        solicitudPrueba.setId(2L);
+        solicitudPrueba.setTecnico(null); // Forzamos que sea null
+        solicitudPrueba.setCliente(null); // Forzamos que sea null
+
+        when(solicitudService.consultarSolicitud(2L)).thenReturn(solicitudPrueba);
+
+        mockMvc.perform(get("/api/solicitudes/2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.cliente").isEmpty())
+                .andExpect(jsonPath("$.tecnicoId").isEmpty());
+    }
+    
+    @Test
+    void consultar_ConClienteYTecnicoAsignados_DeberiaMapearTodo() throws Exception {
+        Solicitud sol = new Solicitud();
+        sol.setId(3L);
+        sol.setDescripcion("Test completo");
+        sol.setTecnico(new Tecnico(5L, true));
+        com.mgcss.domain.Cliente cliente = new com.mgcss.domain.Cliente(10L, "Acme");
+        sol.setCliente(cliente);
+
+        when(solicitudService.consultarSolicitud(3L)).thenReturn(sol);
+
+        mockMvc.perform(get("/api/solicitudes/3"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.tecnicoId").value(5))
+                .andExpect(jsonPath("$.cliente.id").value(10))
+                .andExpect(jsonPath("$.cliente.nombre").value("Acme"));
     }
 }

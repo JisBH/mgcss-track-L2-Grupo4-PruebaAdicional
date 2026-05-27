@@ -27,6 +27,9 @@ class SolicitudServiceTest {
     private SolicitudService solicitudService; // El servicio real, que usará los repos de mentira
 
     private Solicitud solicitudPrueba;
+    
+    @Mock
+    private ClienteRepository clienteRepoMock;
 
     @BeforeEach
     void setUp() {
@@ -57,9 +60,15 @@ class SolicitudServiceTest {
 
     @Test
     void crearSolicitud_DeberiaGuardarEnRepositorio() {
+        // 1. Simulamos que el cliente con ID 1 existe
+        Cliente clienteSimulado = new Cliente(1L, "Cliente Test");
+        when(clienteRepoMock.findById(1L)).thenReturn(Optional.of(clienteSimulado));
+        
+        // 2. Simulamos el guardado de la solicitud
         when(solicitudRepoMock.save(any(Solicitud.class))).thenReturn(solicitudPrueba);
 
-        Solicitud creada = solicitudService.crearSolicitud();
+        // 3. Ejecutamos el método con los NUEVOS parámetros
+        Solicitud creada = solicitudService.crearSolicitud("Avería de prueba", 1L);
 
         assertNotNull(creada);
         // Verificamos que el repositorio guardó algo al menos 1 vez

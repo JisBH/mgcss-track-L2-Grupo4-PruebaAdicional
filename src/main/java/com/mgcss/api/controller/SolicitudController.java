@@ -42,8 +42,8 @@ public class SolicitudController {
         @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos")
     })
     @PostMapping
-    public ResponseEntity<SolicitudResponseDTO> crear() {
-        Solicitud nueva = solicitudService.crearSolicitud();
+    public ResponseEntity<SolicitudResponseDTO> crear(@Valid @RequestBody com.mgcss.api.dto.SolicitudRequestDTO request) {
+        Solicitud nueva = solicitudService.crearSolicitud(request.descripcion(), request.clienteId());
         return ResponseEntity.status(HttpStatus.CREATED).body(mapearADTO(nueva));
     }
 
@@ -119,16 +119,22 @@ public class SolicitudController {
      */
     private SolicitudResponseDTO mapearADTO(Solicitud solicitud) {
         List<String> historialStr = solicitud.getHistorialEstados().stream()
-                .map(Enum::name)
-                .toList();
-
+                .map(Enum::name).toList();
         Long tecnicoId = (solicitud.getTecnico() != null) ? solicitud.getTecnico().getId() : null;
+
+        // Construir el objeto clienteDTO si existe
+        SolicitudResponseDTO.ClienteDTO clienteDTO = null;
+        if (solicitud.getCliente() != null) {
+            clienteDTO = new SolicitudResponseDTO.ClienteDTO(solicitud.getCliente().getId(), solicitud.getCliente().getNombre());
+        }
 
         return new SolicitudResponseDTO(
             solicitud.getId(),
+            solicitud.getDescripcion(),
             solicitud.getEstado().name(),
             solicitud.getFechaCreacion(),
             tecnicoId,
+            clienteDTO,
             historialStr
         );
     }
