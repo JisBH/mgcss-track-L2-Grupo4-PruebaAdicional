@@ -51,4 +51,10 @@ class ClienteTest {
         
         assertEquals(1, cliente.getSolicitudes().size());
     }
+    
+    @Test
+    void crearCliente_ConNombreVacioOPurosEspacios_DeberiaLanzarReglaNegocio() {
+        assertThrows(ReglaNegocio.class, () -> new Cliente("   "));
+        assertThrows(ReglaNegocio.class, () -> new Cliente(""));
+    }
 }

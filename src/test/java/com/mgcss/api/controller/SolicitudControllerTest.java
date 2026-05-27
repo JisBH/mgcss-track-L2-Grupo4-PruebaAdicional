@@ -159,4 +159,22 @@ class SolicitudControllerTest {
                 .andExpect(jsonPath("$.cliente").isEmpty())
                 .andExpect(jsonPath("$.tecnicoId").isEmpty());
     }
+    
+    @Test
+    void consultar_ConClienteYTecnicoAsignados_DeberiaMapearTodo() throws Exception {
+        Solicitud sol = new Solicitud();
+        sol.setId(3L);
+        sol.setDescripcion("Test completo");
+        sol.setTecnico(new Tecnico(5L, true));
+        com.mgcss.domain.Cliente cliente = new com.mgcss.domain.Cliente(10L, "Acme");
+        sol.setCliente(cliente);
+
+        when(solicitudService.consultarSolicitud(3L)).thenReturn(sol);
+
+        mockMvc.perform(get("/api/solicitudes/3"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.tecnicoId").value(5))
+                .andExpect(jsonPath("$.cliente.id").value(10))
+                .andExpect(jsonPath("$.cliente.nombre").value("Acme"));
+    }
 }
