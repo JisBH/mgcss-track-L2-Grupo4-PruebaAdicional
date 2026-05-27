@@ -87,7 +87,7 @@ class SolicitudRepositoryAdapterTest {
         
         // Creamos la entidad que fingirá devolver la base de datos
         SolicitudEntity entityGuardada = new SolicitudEntity();
-        entityGuardada.setId(10L); // <-- ¡ESTA ES LA CLAVE! Le damos un ID válido
+        entityGuardada.setId(10L);
         
         when(jpaRepo.save(any(SolicitudEntity.class))).thenReturn(entityGuardada);
         
