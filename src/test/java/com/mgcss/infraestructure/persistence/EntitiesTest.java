@@ -39,4 +39,29 @@ class EntitiesTest {
         assertEquals(Solicitud.Estado.EN_PROCESO, solicitud.getEstado());
         assertEquals(tecnico, solicitud.getTecnico());
     }
+    
+    @Test
+    void testClienteEntityGettersAndSetters() {
+        ClienteEntity cliente = new ClienteEntity();
+        cliente.setId(5L);
+        cliente.setNombre("Empresa X");
+        
+        assertEquals(5L, cliente.getId());
+        assertEquals("Empresa X", cliente.getNombre());
+        
+        ClienteEntity cliente2 = new ClienteEntity("Empresa Y");
+        assertEquals("Empresa Y", cliente2.getNombre());
+    }
+    
+    @Test
+    void testCamposSolicitudEntity() {
+        SolicitudEntity solicitud = new SolicitudEntity();
+        ClienteEntity cliente = new ClienteEntity("Cliente Z");
+        
+        solicitud.setDescripcion("Fallo en router");
+        solicitud.setCliente(cliente);
+        
+        assertEquals("Fallo en router", solicitud.getDescripcion());
+        assertEquals(cliente, solicitud.getCliente());
+    }
 }

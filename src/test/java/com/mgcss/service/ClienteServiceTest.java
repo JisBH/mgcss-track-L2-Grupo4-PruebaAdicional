@@ -10,6 +10,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -35,5 +38,28 @@ class ClienteServiceTest {
         assertNotNull(resultado);
         assertEquals(1L, resultado.getId());
         verify(clienteRepoMock, times(1)).save(any(Cliente.class));
+    }
+    
+    @Test
+    void listarClientes_DeberiaDevolverLista() {
+        when(clienteRepoMock.findAll()).thenReturn(List.of(new Cliente(1L, "A")));
+        List<Cliente> resultado = clienteService.listarClientes();
+        assertFalse(resultado.isEmpty());
+    }
+
+    @Test
+    void consultarCliente_SiExiste_LoDevuelve() {
+        Cliente cliente = new Cliente(1L, "A");
+        when(clienteRepoMock.findById(1L)).thenReturn(java.util.Optional.of(cliente));
+        Cliente encontrado = clienteService.consultarCliente(1L);
+        assertEquals("A", encontrado.getNombre());
+    }
+
+    @Test
+    void consultarCliente_SiNoExiste_LanzaExcepcion() {
+        when(clienteRepoMock.findById(99L)).thenReturn(java.util.Optional.empty());
+        assertThrows(com.mgcss.domain.EntidadNoEncontrada.class, () -> {
+            clienteService.consultarCliente(99L);
+        });
     }
 }

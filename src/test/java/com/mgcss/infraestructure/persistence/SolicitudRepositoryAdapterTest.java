@@ -1,8 +1,6 @@
 package com.mgcss.infraestructure.persistence;
 
 import com.mgcss.domain.Solicitud;
-import com.mgcss.domain.Tecnico;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,34 +27,38 @@ class SolicitudRepositoryAdapterTest {
 
     @Test
     void findById_CuandoExiste_DeberiaMapearADominio() {
-        // Arrange
         SolicitudEntity entity = new SolicitudEntity();
         entity.setId(1L);
         entity.setEstado(Solicitud.Estado.ABIERTA);
+        entity.setDescripcion("Problema de red");
+        ClienteEntity clienteEntity = new ClienteEntity("Cliente A");
+        clienteEntity.setId(20L);
+        entity.setCliente(clienteEntity);
+        
         when(jpaRepo.findById(1L)).thenReturn(Optional.of(entity));
 
-        // Act
         Optional<Solicitud> resultado = adapter.findById(1L);
 
-        // Assert
         assertTrue(resultado.isPresent());
-        assertEquals(1L, resultado.get().getId());
+        assertEquals("Problema de red", resultado.get().getDescripcion());
+        assertEquals(20L, resultado.get().getCliente().getId());
     }
 
     @Test
     void save_DeberiaMapearEntityYGuardar() {
-        // Arrange
         Solicitud solicitud = new Solicitud();
         solicitud.setId(1L);
-        SolicitudEntity entity = new SolicitudEntity();
-        entity.setId(1L);
+        solicitud.setDescripcion("Revisión");
+        com.mgcss.domain.Cliente cliente = new com.mgcss.domain.Cliente(15L, "Cliente B");
+        solicitud.setCliente(cliente);
         
-        when(jpaRepo.save(any(SolicitudEntity.class))).thenReturn(entity);
+        SolicitudEntity entityRetorno = new SolicitudEntity();
+        entityRetorno.setId(1L);
+        
+        when(jpaRepo.save(any(SolicitudEntity.class))).thenReturn(entityRetorno);
 
-        // Act
         Solicitud guardada = adapter.save(solicitud);
 
-        // Assert
         assertNotNull(guardada);
         verify(jpaRepo).save(any(SolicitudEntity.class));
     }
