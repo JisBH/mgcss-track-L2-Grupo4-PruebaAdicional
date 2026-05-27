@@ -45,6 +45,8 @@ public class SolicitudEntity {
      */
     @ManyToOne 
     private TecnicoEntity tecnico;
+    
+    private String descripcion;
 
     
     // --- GETTERS Y SETTERS ---
@@ -85,4 +87,7 @@ public class SolicitudEntity {
 
 	public ClienteEntity getCliente() { return cliente; }
 	public void setCliente(ClienteEntity cliente) { this.cliente = cliente; }
+	
+	public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 }

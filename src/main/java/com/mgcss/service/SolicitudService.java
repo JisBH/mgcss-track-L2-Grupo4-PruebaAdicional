@@ -1,5 +1,6 @@
 package com.mgcss.service;
 
+import com.mgcss.domain.ClienteRepository;
 import com.mgcss.domain.EntidadNoEncontrada;
 import com.mgcss.domain.Solicitud;
 import com.mgcss.domain.SolicitudRepository;
@@ -19,22 +20,30 @@ public class SolicitudService {
     
     private final SolicitudRepository solicitudRepo;
     private final TecnicoRepository tecnicoRepo;
+    private final ClienteRepository clienteRepo;
 
     /**
      * Inyecta las dependencias necesarias. Spring proporcionará automáticamente los adaptadores
      * de infraestructura que implementan estas interfaces.
      */
-    public SolicitudService(SolicitudRepository solicitudRepo, TecnicoRepository tecnicoRepo) {
+    public SolicitudService(SolicitudRepository solicitudRepo, TecnicoRepository tecnicoRepo, ClienteRepository clienteRepo) {
         this.solicitudRepo = solicitudRepo;
         this.tecnicoRepo = tecnicoRepo;
+        this.clienteRepo = clienteRepo;
     }
 
     /**
      * Crea una nueva solicitud en el sistema con estado inicial ABIERTA.
      * @return La solicitud creada y persistida.
      */
-    public Solicitud crearSolicitud() {
+    public Solicitud crearSolicitud(String descripcion, Long clienteId) {
+        com.mgcss.domain.Cliente cliente = clienteRepo.findById(clienteId)
+                .orElseThrow(() -> new EntidadNoEncontrada("Cliente no encontrado"));
+                
         Solicitud solicitud = new Solicitud();
+        solicitud.setDescripcion(descripcion);
+        solicitud.setCliente(cliente);
+        
         return solicitudRepo.save(solicitud);
     }
     

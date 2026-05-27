@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record SolicitudResponseDTO(
 		@Schema(description = "Identificador único de la solicitud", example = "1")
 	    long id,
+	    String descripcion,
 	    
 	    @Schema(description = "Estado actual de la solicitud", example = "ABIERTA")
 	    String estado,
@@ -30,7 +31,10 @@ public record SolicitudResponseDTO(
 	    @Schema(description = "ID del técnico asignado", example = "10")
 	    Long tecnicoId, 
 	    
+	    ClienteDTO cliente,
+	    
 	    @Schema(description = "Lista de estados por los que ha pasado la solicitud", example = "[\"ABIERTA\", \"ASIGNADA\"]")
 	    List<String> historial 
 	) {
-	}
+	public record ClienteDTO(Long id, String nombre) {}
+}

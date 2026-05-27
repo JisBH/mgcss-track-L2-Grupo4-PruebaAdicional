@@ -28,6 +28,8 @@ public class Solicitud {
 
     /** Registro de los cambios de estado por los que ha pasado la solicitud. */
     private List<Estado> historialEstados = new ArrayList<>();
+    
+    private String descripcion;
 
     /**
      * Posibles estados en los que puede encontrarse una solicitud.
@@ -155,5 +157,8 @@ public class Solicitud {
     
     public Cliente getCliente() { return cliente; }
     public void setCliente(Cliente cliente) { this.cliente = cliente; }
+    
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 }
 

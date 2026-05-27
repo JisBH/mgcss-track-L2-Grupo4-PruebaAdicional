@@ -59,13 +59,27 @@ class SolicitudControllerTest {
 
     @Test
     void crear_DeberiaDevolverHttp201YLaNuevaSolicitud() throws Exception {
+        // 1. Preparamos la respuesta simulada
         Solicitud solicitudPrueba = new Solicitud();
         solicitudPrueba.setId(1L);
+        solicitudPrueba.setDescripcion("Nueva tarea");
 
-        when(solicitudService.crearSolicitud()).thenReturn(solicitudPrueba);
+        // Usamos anyString() y anyLong() porque la firma del servicio cambió
+        when(solicitudService.crearSolicitud(anyString(), anyLong())).thenReturn(solicitudPrueba);
 
-        mockMvc.perform(post("/api/solicitudes"))
-                .andExpect(status().isCreated()) // Código HTTP 201 Created
+        // 2. Preparamos el JSON que simula enviar el frontend
+        String jsonPayload = """
+            {
+                "descripcion": "Nueva tarea",
+                "clienteId": 1
+            }
+            """;
+
+        // 3. Hacemos la petición POST enviando el JSON
+        mockMvc.perform(post("/api/solicitudes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonPayload))
+                .andExpect(status().isCreated()) // Ahora sí devolverá 201 Created
                 .andExpect(jsonPath("$.id").value(1));
     }
 

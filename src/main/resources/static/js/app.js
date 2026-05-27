@@ -87,13 +87,17 @@ async function cargarSolicitudes() {
         // (Opcional) Si en tu DTO devuelves clienteNombre directo en vez del objeto anidado, sería: s.clienteNombre
 
         // 3. Pintar la fila completa unificada (con tus 6 columnas en el orden correcto)
-        row.innerHTML = `
-            <td>#${s.id}</td>
-            <td>${s.descripcion || s.fechaCreacion || 'Ver detalle'}</td>
-            <td><strong>${clienteAsignado}</strong></td> <td><span class="badge badge-${s.estado.toLowerCase()}">${s.estado}</span></td>
-            <td>${s.tecnicoId ? '👤 Técnico ' + s.tecnicoId : '<i>Sin asignar</i>'}</td>
-            <td>${acciones}</td>
-        `;
+		row.innerHTML = `
+		            <td>#${s.id}</td>
+		            <td>
+		                <span style="font-size: 0.85em; color: gray;">${s.fechaCreacion}</span><br>
+		                <span>${s.descripcion || 'Sin descripción'}</span>
+		            </td>
+		            <td><strong>${clienteAsignado}</strong></td> 
+		            <td><span class="badge badge-${s.estado.toLowerCase()}">${s.estado}</span></td>
+		            <td>${s.tecnicoId ? 'Técnico ' + s.tecnicoId : '<i>Sin asignar</i>'}</td>
+		            <td>${acciones}</td>
+		        `;
         
         tableBody.appendChild(row);
     });
@@ -245,7 +249,7 @@ async function guardarNuevaSolicitud() {
         });
 
         if (response.ok) {
-            alert("Solicitud creada y asignada al cliente con éxito.");
+           //alert("Solicitud creada y asignada al cliente con éxito.");
             cerrarModalSolicitud();
             initData(); // Refresca la tabla principal automáticamente
         } else {

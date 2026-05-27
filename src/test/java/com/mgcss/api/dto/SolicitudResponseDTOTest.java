@@ -22,9 +22,9 @@ class SolicitudResponseDTOTest {
         SolicitudResponseDTO dto = new SolicitudResponseDTO(
                 idEsperado,
                 estadoEsperado,
-                fechaEsperada,
+                estadoEsperado, fechaEsperada,
                 tecnicoIdEsperado,
-                historialEsperado
+                null, historialEsperado
         );
 
         // 3. Assert (Comprobar): Verificamos que los datos se asignan y leen bien
@@ -40,11 +40,11 @@ class SolicitudResponseDTOTest {
         LocalDate fecha = LocalDate.now();
         
         SolicitudResponseDTO dto1 = new SolicitudResponseDTO(
-                1L, "ABIERTA", fecha, null, List.of("ABIERTA")
+                1L, "ABIERTA", null, fecha, null, null, List.of("ABIERTA")
         );
         
         SolicitudResponseDTO dto2 = new SolicitudResponseDTO(
-                1L, "ABIERTA", fecha, null, List.of("ABIERTA")
+                1L, "ABIERTA", null, fecha, null, null, List.of("ABIERTA")
         );
 
         // Comprobamos que ambos objetos se consideran exactamente iguales

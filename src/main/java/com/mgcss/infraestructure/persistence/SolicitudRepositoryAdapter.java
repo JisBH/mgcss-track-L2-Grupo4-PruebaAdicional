@@ -1,5 +1,6 @@
 package com.mgcss.infraestructure.persistence;
 
+import com.mgcss.domain.Cliente;
 import com.mgcss.domain.Solicitud;
 import com.mgcss.domain.SolicitudRepository;
 import com.mgcss.domain.Tecnico;
@@ -64,6 +65,7 @@ public class SolicitudRepositoryAdapter implements SolicitudRepository {
         entity.setEstado(solicitud.getEstado());
         entity.setFechaCreacion(solicitud.getFechaCreacion());
         
+        entity.setDescripcion(solicitud.getDescripcion());
         // Mapeo de la colección de historial
         entity.setHistorialEstados(solicitud.getHistorialEstados());
         
@@ -74,6 +76,11 @@ public class SolicitudRepositoryAdapter implements SolicitudRepository {
             entity.setTecnico(tecnicoEntity);
         }
         
+        if (solicitud.getCliente() != null) {
+            ClienteEntity clienteEntity = new ClienteEntity(solicitud.getCliente().getNombre());
+            clienteEntity.setId(solicitud.getCliente().getId());
+            entity.setCliente(clienteEntity);
+        }
         return entity;
     }
 
@@ -84,17 +91,20 @@ public class SolicitudRepositoryAdapter implements SolicitudRepository {
     private Solicitud toDomain(SolicitudEntity entity) {
         Tecnico tecnico = null;
         if (entity.getTecnico() != null) {
-            // Reconstruimos el técnico de dominio
             tecnico = new Tecnico(entity.getTecnico().getId(), entity.getTecnico().isActivo());
         }
         
-        // Reconstruimos la solicitud usando el constructor de base de datos definido anteriormente
-        return new Solicitud(
-                entity.getId(),
-                entity.getFechaCreacion(),
-                entity.getEstado(),
-                tecnico,
-                entity.getHistorialEstados()
+        Solicitud solicitud = new Solicitud(
+                entity.getId(), entity.getFechaCreacion(),
+                entity.getEstado(), tecnico, entity.getHistorialEstados()
         );
+        
+        solicitud.setDescripcion(entity.getDescripcion()); // ¡NUEVO!
+        
+        // ¡NUEVO! Mapeo del cliente
+        if (entity.getCliente() != null) {
+            solicitud.setCliente(new Cliente(entity.getCliente().getId(), entity.getCliente().getNombre()));
+        }
+        return solicitud;
     }
 }
