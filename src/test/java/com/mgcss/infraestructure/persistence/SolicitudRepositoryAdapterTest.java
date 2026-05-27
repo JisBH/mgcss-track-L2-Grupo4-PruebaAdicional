@@ -85,8 +85,14 @@ class SolicitudRepositoryAdapterTest {
         Solicitud solicitud = new Solicitud(); // ID será 0 por defecto
         solicitud.setCliente(null); // Forzar rama nula
         
-        when(jpaRepo.save(any(SolicitudEntity.class))).thenReturn(new SolicitudEntity());
+        // Creamos la entidad que fingirá devolver la base de datos
+        SolicitudEntity entityGuardada = new SolicitudEntity();
+        entityGuardada.setId(10L); // <-- ¡ESTA ES LA CLAVE! Le damos un ID válido
         
-        assertNotNull(adapter.save(solicitud));
+        when(jpaRepo.save(any(SolicitudEntity.class))).thenReturn(entityGuardada);
+        
+        Solicitud resultado = adapter.save(solicitud);
+        assertNotNull(resultado);
+        assertEquals(10L, resultado.getId()); // Comprobamos que el ID se mapea bien
     }
 }
