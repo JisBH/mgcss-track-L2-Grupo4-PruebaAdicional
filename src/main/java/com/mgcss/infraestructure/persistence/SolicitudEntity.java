@@ -77,5 +77,12 @@ public class SolicitudEntity {
 	public TecnicoEntity getTecnico() { return tecnico; }
 	
     /** @param tecnico La entidad del técnico a asociar. */
-	public void setTecnico(TecnicoEntity tecnico) { this.tecnico = tecnico; }    
+	public void setTecnico(TecnicoEntity tecnico) { this.tecnico = tecnico; }   
+	
+	/**Para guardar la relación en la base de datos, mapea el cliente en SolicitudEntity.java */
+	@ManyToOne
+	private ClienteEntity cliente;
+
+	public ClienteEntity getCliente() { return cliente; }
+	public void setCliente(ClienteEntity cliente) { this.cliente = cliente; }
 }

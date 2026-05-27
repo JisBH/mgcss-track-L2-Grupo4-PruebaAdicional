@@ -22,6 +22,9 @@ public class Solicitud {
 
     /** Técnico asignado para resolver la solicitud. */
     private Tecnico tecnico;
+    
+    /** Cliente asignado para la solicitud. */
+    private Cliente cliente;
 
     /** Registro de los cambios de estado por los que ha pasado la solicitud. */
     private List<Estado> historialEstados = new ArrayList<>();
@@ -149,4 +152,8 @@ public class Solicitud {
     public List<Estado> getHistorialEstados() {
         return Collections.unmodifiableList(historialEstados);
     }
+    
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
 }
+
