@@ -144,4 +144,19 @@ class SolicitudControllerTest {
         mockMvc.perform(put("/api/solicitudes/1/cerrar"))
                 .andExpect(status().isBadRequest()); // Responde 400 automáticamente gracias al @ResponseStatus
     }
+    
+    @Test
+    void consultar_SinClienteNiTecnico_DeberiaMapearNullsCorrectamente() throws Exception {
+        Solicitud solicitudPrueba = new Solicitud();
+        solicitudPrueba.setId(2L);
+        solicitudPrueba.setTecnico(null); // Forzamos que sea null
+        solicitudPrueba.setCliente(null); // Forzamos que sea null
+
+        when(solicitudService.consultarSolicitud(2L)).thenReturn(solicitudPrueba);
+
+        mockMvc.perform(get("/api/solicitudes/2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.cliente").isEmpty())
+                .andExpect(jsonPath("$.tecnicoId").isEmpty());
+    }
 }

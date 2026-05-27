@@ -31,4 +31,24 @@ class ClienteTest {
         assertEquals(1, cliente.getSolicitudes().size());
         assertTrue(cliente.getSolicitudes().contains(solicitud));
     }
+    
+    @Test
+    void crearCliente_ConNombreNulo_DeberiaLanzarReglaNegocio() {
+        assertThrows(ReglaNegocio.class, () -> new Cliente(null));
+    }
+
+    @Test
+    void vincularSolicitud_NulaODuplicada_DeberiaManejarCorrectamente() {
+        Cliente cliente = new Cliente("Test");
+        
+        // 1. Probar solicitud nula
+        assertThrows(ReglaNegocio.class, () -> cliente.vincularSolicitud(null));
+        
+        // 2. Probar solicitud duplicada (debe ignorarla para cubrir el if !contains)
+        Solicitud s = new Solicitud();
+        cliente.vincularSolicitud(s);
+        cliente.vincularSolicitud(s); // Se añade por segunda vez
+        
+        assertEquals(1, cliente.getSolicitudes().size());
+    }
 }

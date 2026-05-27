@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Adaptador de infraestructura secundaria que implementa el puerto {@link ClienteRepository}
@@ -44,6 +43,6 @@ public class ClienteRepositoryAdapter implements ClienteRepository {
     public List<Cliente> findAll() {
         return jpaRepository.findAll().stream()
                 .map(e -> new Cliente(e.getId(), e.getNombre()))
-                .collect(Collectors.toList());
+                .toList();
     }
 }

@@ -62,4 +62,31 @@ class SolicitudRepositoryAdapterTest {
         assertNotNull(guardada);
         verify(jpaRepo).save(any(SolicitudEntity.class));
     }
+    
+    @Test
+    void findById_SinClienteNiTecnico_DeberiaMapearCorrectamente() {
+        SolicitudEntity entity = new SolicitudEntity();
+        entity.setId(2L);
+        entity.setEstado(Solicitud.Estado.ABIERTA);
+        entity.setCliente(null); // Rama nula
+        entity.setTecnico(null); // Rama nula
+
+        when(jpaRepo.findById(2L)).thenReturn(Optional.of(entity));
+
+        Optional<Solicitud> resultado = adapter.findById(2L);
+
+        assertTrue(resultado.isPresent());
+        assertNull(resultado.get().getCliente());
+        assertNull(resultado.get().getTecnico());
+    }
+
+    @Test
+    void save_ConIdCeroYSinCliente_DeberiaMapearEntity() {
+        Solicitud solicitud = new Solicitud(); // ID será 0 por defecto
+        solicitud.setCliente(null); // Forzar rama nula
+        
+        when(jpaRepo.save(any(SolicitudEntity.class))).thenReturn(new SolicitudEntity());
+        
+        assertNotNull(adapter.save(solicitud));
+    }
 }
