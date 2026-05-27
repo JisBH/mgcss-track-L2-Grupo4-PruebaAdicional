@@ -42,7 +42,11 @@ class ClienteRepositoryAdapterTest {
 
     @Test
     void findAll_MapeaCorrectamente() {
-        when(jpaRepo.findAll()).thenReturn(List.of(new ClienteEntity("Test")));
+        ClienteEntity entity = new ClienteEntity("Test");
+        entity.setId(5L); 
+        
+        when(jpaRepo.findAll()).thenReturn(List.of(entity));
+        
         assertFalse(adapter.findAll().isEmpty());
     }
 }
