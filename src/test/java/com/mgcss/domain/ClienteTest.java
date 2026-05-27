@@ -57,4 +57,17 @@ class ClienteTest {
         assertThrows(ReglaNegocio.class, () -> new Cliente("   "));
         assertThrows(ReglaNegocio.class, () -> new Cliente(""));
     }
+    
+    @Test
+    void setters_DeberianModificarLosAtributos() {
+        Cliente cliente = new Cliente(1L, "Inicial");
+        
+        // Ejecutamos las 2 líneas que faltan por cubrir
+        cliente.setId(99L);
+        cliente.setNombre("Modificado");
+        
+        // Comprobamos que funcionaron
+        assertEquals(99L, cliente.getId());
+        assertEquals("Modificado", cliente.getNombre());
+    }
 }
