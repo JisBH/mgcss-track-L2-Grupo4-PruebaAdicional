@@ -45,7 +45,7 @@ jobs:
           echo "Construyendo y subiendo imagen para la versión: ${{ github.ref_name }}"
           
           # Etiquetamos con el namespace de tu usuario de Docker Hub
-          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/mgcss-track"
+          IMAGE_NAME="$DOCKER_USER/mgcss-track"
           
           docker build -t $IMAGE_NAME:${{ github.ref_name }} -t $IMAGE_NAME:latest .
           
