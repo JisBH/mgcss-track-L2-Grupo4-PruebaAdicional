@@ -3,7 +3,7 @@ name: Release automatica
 on:
   push:
     tags:
-      - 'v*' 
+      - 'v*'
 
 jobs:
   release:
@@ -13,14 +13,14 @@ jobs:
     # IMPORTANTE: Permisos para que el GITHUB_TOKEN 
     # pueda crear la release en el repositorio automáticamente.
     permissions:
-      contents: write 
+      contents: write
 
     steps:
       # 1. Hacer checkout
       - name: Checkout del código
         uses: actions/checkout@v4
 
-      # Configurar el entorno Java
+      # 2. Configurar el entorno Java
       - name: Setup Java 17
         uses: actions/setup-java@v3
         with:
@@ -28,25 +28,36 @@ jobs:
           java-version: '17'
           cache: 'maven'
 
-      # 2 y 3. Compilar proyecto y generar artefacto (.jar)
+      # 3. Compilar proyecto y generar artefacto (.jar)
       - name: Compilar y empaquetar con Maven
         run: mvn -B clean package -DskipTests
 
-      # 4. Construir imagen Docker
-      - name: Construir imagen Docker
+      # 4. Iniciar sesión en Docker Hub
+      - name: Iniciar sesión en Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 5. Construir y hacer Push de la imagen Docker
+      - name: Construir y subir imagen Docker
         run: |
-          echo "Construyendo imagen para la versión: ${{ github.ref_name }}"
+          echo "Construyendo y subiendo imagen para la versión: ${{ github.ref_name }}"
           
-          # Etiquetamos con la versión exacta (ej. v1.1.0) y también como latest
-          docker build -t mgcss-track:${{ github.ref_name }} -t mgcss-track:latest .
+          # Etiquetamos con el namespace de tu usuario de Docker Hub
+          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/mgcss-track"
+          
+          docker build -t $IMAGE_NAME:${{ github.ref_name }} -t $IMAGE_NAME:latest .
+          
+          # Subimos ambas etiquetas (la versión exacta y la última) al registro
+          docker push $IMAGE_NAME:${{ github.ref_name }}
+          docker push $IMAGE_NAME:latest
         
-      # 5. Publicar Release en GitHub
+      # 6. Publicar Release en GitHub
       - name: Crear GitHub Release y subir artefacto
         uses: softprops/action-gh-release@v1
         with:
-          # Adjuntamos el .jar generado en la carpeta target
           files: target/*.jar 
-          # GitHub generará automáticamente las release notes basándose en los commits
           generate_release_notes: true 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
