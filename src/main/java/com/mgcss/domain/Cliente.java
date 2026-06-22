@@ -3,6 +3,8 @@ package com.mgcss.domain;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+//Esto es un comentario de prueba
+
 
 /**
  * Entidad de dominio puro que representa a un Cliente dentro del sistema.
