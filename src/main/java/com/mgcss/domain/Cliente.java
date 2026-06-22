@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 //Esto es un comentario de prueba
-
+//Esto es otro comentario
 
 /**
  * Entidad de dominio puro que representa a un Cliente dentro del sistema.
