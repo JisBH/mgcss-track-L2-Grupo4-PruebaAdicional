@@ -3,6 +3,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=xexprex_mgcss-track-L2-Grupo4&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=xexprex_mgcss-track-L2-Grupo4)
 
 ## Descripción del Proyecto
+Prueba
 Es una plataforma diseñada para gestionar el ciclo de vida completo de las solicitudes de mantenimiento técnico. Permite registrar incidencias asociadas a clientes, asignar técnicos, registrar el historial de los estados y realizar el seguimiento continuo (`ABIERTA`, `EN_PROCESO`, `CERRADA`, con posibilidad de reapertura).
 
 El proyecto se destaca por una **Arquitectura Hexagonal (Puertos y Adaptadores)** que aísla completamente la lógica de negocio de las dependencias tecnológicas.
